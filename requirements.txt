@@ -7,3 +7,4 @@ streamlit==1.49.1
 sentence-transformers==5.1.0
 PyMuPDF==1.27.2.2
 plotly==6.7.0
+numpy==2.2.6
