@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Resume Fit Analyzer</title>
+    <meta
+      name="description"
+      content="Score a resume against a job description, requirement by requirement. Runs entirely in your browser."
+    />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><text y='14' font-size='14'>📄</text></svg>" />
+    <link rel="preconnect" href="https://huggingface.co" />
+    <link rel="preconnect" href="https://cdn-lfs.hf.co" crossorigin />
+  </head>
+  <body>
+    <header class="site-header">
+      <h1>Resume&nbsp;Fit Analyzer</h1>
+      <p class="tagline">
+        Scores your resume against a job description requirement by requirement, and tells you
+        exactly which skills are missing.
+      </p>
+      <p class="privacy">
+        <span class="dot" aria-hidden="true"></span>
+        Runs entirely in your browser — your resume is never uploaded anywhere.
+      </p>
+    </header>
+
+    <main>
+      <section class="panel inputs" aria-label="Inputs">
+        <div class="field">
+          <label for="jd">Job description</label>
+          <textarea
+            id="jd"
+            rows="10"
+            placeholder="Paste the full posting, including the Requirements and Preferred sections. Keeping the bullet structure gives the best results — each bullet is scored as its own requirement."
+          ></textarea>
+        </div>
+
+        <div class="field">
+          <label for="file">Resume (PDF)</label>
+          <div id="drop" class="dropzone" tabindex="0" role="button" aria-controls="file">
+            <input id="file" type="file" accept="application/pdf,.pdf" hidden />
+            <svg viewBox="0 0 24 24" aria-hidden="true" class="drop-icon">
+              <path
+                d="M12 16V4m0 0L8 8m4-4 4 4M4 16v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.7"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            <span class="drop-text">Drop a PDF here, or <u>browse</u></span>
+            <span id="filename" class="filename"></span>
+          </div>
+        </div>
+
+        <button id="analyze" class="primary" type="button">Analyze fit</button>
+        <p id="status" class="status" role="status" aria-live="polite"></p>
+        <div id="progress" class="progress" hidden><div id="bar" class="bar"></div></div>
+      </section>
+
+      <section id="empty" class="panel intro">
+        <h2>What you get</h2>
+        <ul>
+          <li><strong>An overall fit score</strong> blending literal skill matching with semantic similarity.</li>
+          <li><strong>Requirement-by-requirement coverage</strong> — every bullet marked covered, partial or missing, with the line from your resume that matched it.</li>
+          <li><strong>A concrete skill gap list</strong>, split into must-haves and nice-to-haves, including related experience you already have.</li>
+          <li><strong>ATS readability checks</strong> beyond a word count.</li>
+        </ul>
+        <p class="footnote">
+          The first analysis downloads about 30&nbsp;MB to your browser — a 22.6&nbsp;MB language
+          model plus the runtime that executes it — and caches both. Everything after that is
+          instant and works offline.
+        </p>
+      </section>
+
+      <section id="results" class="results" hidden>
+        <div class="panel scoreboard">
+          <div id="gauge" class="gauge"></div>
+          <div class="metrics">
+            <div class="metric">
+              <span class="metric-label">Skill coverage</span>
+              <span id="m-skills" class="metric-value">—</span>
+              <span class="metric-help">Technologies named in the posting that appear in your resume.</span>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Requirements met</span>
+              <span id="m-reqs" class="metric-value">—</span>
+              <span class="metric-help">How well your resume evidences each requirement.</span>
+            </div>
+            <div class="metric">
+              <span class="metric-label">Must-have gaps</span>
+              <span id="m-gaps" class="metric-value">—</span>
+              <span class="metric-help">Required skills with no evidence in your resume.</span>
+            </div>
+          </div>
+        </div>
+
+        <p id="headline" class="headline"></p>
+
+        <div class="panel">
+          <div class="tabs" role="tablist">
+            <button class="tab is-active" role="tab" data-panel="p-reqs" type="button">Requirements</button>
+            <button class="tab" role="tab" data-panel="p-skills" type="button">Skill gaps</button>
+            <button class="tab" role="tab" data-panel="p-ats" type="button">ATS &amp; experience</button>
+          </div>
+
+          <div id="p-reqs" class="tabpanel" role="tabpanel"></div>
+          <div id="p-skills" class="tabpanel" role="tabpanel" hidden></div>
+          <div id="p-ats" class="tabpanel" role="tabpanel" hidden></div>
+        </div>
+
+        <div class="actions">
+          <button id="download" class="secondary" type="button">Download report</button>
+          <details class="extracted">
+            <summary>View the text extracted from your PDF</summary>
+            <pre id="extracted"></pre>
+          </details>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span>all-MiniLM-L6-v2 running locally via transformers.js</span>
+    </footer>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
