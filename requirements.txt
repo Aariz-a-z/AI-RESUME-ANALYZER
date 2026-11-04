@@ -1,26 +1,8 @@
-# CPU-only torch: the default PyPI wheel bundles CUDA (~10x larger) and will
-# exhaust the build disk/memory on free hosting tiers.
---extra-index-url https://download.pytorch.org/whl/cpu
-torch==2.8.0+cpu
-
-# Direct dependencies.
+# Dependencies for the redirect stub (app.py) only.
+#
+# The old deployment installed torch and the embedding model here and kept
+# being killed inside the free tier's memory. The stub needs none of that, so
+# it boots in seconds and has nothing to run out of memory on.
+#
+# To run the real analyzer locally, use requirements-full.txt with app_full.py.
 streamlit==1.49.1
-sentence-transformers==5.1.0
-PyMuPDF==1.27.2.2
-plotly==6.7.0
-numpy==2.2.6
-
-# Transitive dependencies, pinned deliberately. Leaving these open means the
-# build resolves differently on every deploy, so an app that worked last week
-# can fail today without a single line of code changing. These are the exact
-# versions the app is known to run on; all have manylinux x86_64 wheels for
-# CPython 3.10-3.13 and satisfy each other's declared bounds.
-transformers==4.56.0
-huggingface-hub==0.34.4
-tokenizers==0.22.0
-safetensors==0.6.2
-scikit-learn==1.7.1
-scipy==1.15.3
-pillow==11.3.0
-tqdm==4.67.1
-typing_extensions==4.14.1
